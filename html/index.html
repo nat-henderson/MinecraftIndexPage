@@ -1,27 +1,19 @@
+<script type="text/javascript" src="/static/jquery.js">
+</script>
+<script>
+$(document).ready(function(){
+    setInterval(function(){
+        $("#playerdata").load("/static/playerdata");
+    }, 3000);
+});
+</script>
+
 <h1> Server status:   ${status}</h1>
 
-<h2> Users:  ${len(users)}</h2>
-
-<table style="border-style:double; border-width:5px">
-    <tr>
-        <td>Username</td>
-        <td style="border-left:solid; border-width:1px">Level</td>
-        <td style="border-left:solid; border-width:1px">X pos</td>
-        <td style="border-left:solid; border-width:1px">Y pos</td>
-        <td style="border-left:solid; border-width:1px">Z pos</td>
-        <td style="border-left:solid; border-width:1px">Health</td>
-    % for row in users:
-        ${makerow(row)}
-    % endfor
-</table>
+<div id="playerdata">
+    <img src="static/ajax-loader.gif" />
+</div>
 
 <iframe seamless="seamless" src="http://minecraft.case.edu:8123" style="width:75%; height:75%" />
 
-<%def name="makerow(row)">
-    <tr>
-        <td>${row[0]}</td>
-        % for item in row[1:]:
-        <td style="border-left:solid; border-width:1px">${int(item)}</td>
-        % endfor
-    </tr>
-</%def>
+

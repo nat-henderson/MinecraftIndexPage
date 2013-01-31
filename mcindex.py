@@ -9,6 +9,7 @@ import os
 import pickle
 
 F_NAME = ".index_props"
+STATIC_DIR = '/home/minecraft/working_copy_indexpage/static'
 lookup = TemplateLookup(directories=['html'])
 
 class MCIndex:
@@ -37,6 +38,9 @@ def update_now_and_then_please():
             attr_list.append(attr)
         print attr_list
         with open(F_NAME, 'w') as f: pickle.dump(attr_list, f)
+        with open(STATIC_DIR + '/playerdata', 'w') as f:
+            tmpl = lookup.get_template('playerdata.html')
+            f.write(tmpl.render(users = attr_list))
     except IOError as e:
         print e
     t = Timer(10, update_now_and_then_please)
@@ -58,9 +62,16 @@ t = Timer(2, update_now_and_then_please)
 t.start()
 
 cherrypy.server.socket_host = '0.0.0.0'
-cherrypy.server.socket_port = 80
-try:
-    cherrypy.quickstart(MCIndex())
-except KeyboardInterrupt:
-    t.stop()
+config = {'/static':
+    {   'tools.staticdir.on': True,
+        'tools.staticdir.dir': STATIC_DIR,
+    }
+}
 
+cherrypy.server.socket_port = 8080
+cherrypy.tree.mount(MCIndex(), '/', config=config)
+try:
+    cherrypy.engine.start()
+except KeyboardInterrupt:
+    t.cancel()
+    cherrypy.engine.stop()
